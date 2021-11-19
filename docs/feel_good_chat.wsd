@@ -1,0 +1,34 @@
+@startuml Feel Good chat
+Messager -> Message: Send a message.
+IBM_Sentiment_Classifier -> Message: Analyse the message.
+
+alt Positive message
+    Messager -> Messager: Get small score.
+else Negative message
+    Message -> Message: Message will be hidden.
+    IBM_Toxic_Classifier -> Message: Analyse if the message is toxic.
+    alt Toxic negative message
+        Messager -> Messager: Lose score.
+        Message -> OpenAI_Chatbot: Forward message for a trained OpenAI chatbot.
+        OpenAI_Chatbot -> Messager: Try teach the messager about empathy by sending a private reply.
+        Messager -> Message: Messager can follow the OpenAI chatbot advice and try to write a new more positive message.
+    else Non-toxic, but negative message
+        Messager -> Messager: Lose small score.
+    end
+end
+
+User -> Message: Possibility to report the the message.
+Peer_reviewers -> Peer_reviewers: Peer reviewers picked randomly from active users.
+Peer_reviewers -> Message: Check the reported message.
+
+alt Over 50% of peer reviewers classifies the message positive
+    User -> User: Lose small score: Wrong report.
+    Peer_reviewers -> Peer_reviewers: Majority of reviewers gets score, minority loses.
+else Over 50% of peer reviewers classifies the message negative
+    Message -> Message: Reported message will be hiddened.
+    Messager -> Messager: Lose score.
+    User -> User: Get score from a good report.
+    Peer_reviewers -> Peer_reviewers: Majority of reviewers gets score, minority loses.
+    Message -> IBM_Sentiment_Classifier: Message is used for further teaching of the model.
+end
+@enduml
