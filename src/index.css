@@ -11,3 +11,31 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.qr-wrapper {
+  position: absolute;
+  width: calc((100vw - 728px) / 2);
+}
+
+.qr-wrapper > p {
+  color: black;
+  max-width: calc((100vw - 728px) / 2);
+  padding: 0;
+  padding-top: 10px;
+  margin: 0;
+  font-weight: bold;
+}
+
+.qr-wrapper > a {
+  color: black;
+  max-width: calc((100vw - 728px) / 2);
+  padding: 10px;
+}
+
+.qr {
+  width: calc(100% - 20px);
+  height: calc(100% - 20px);
+  border-radius: 0;
+  padding: 0;
+  margin: 10px;
+}
