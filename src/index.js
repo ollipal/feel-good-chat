@@ -7,7 +7,7 @@ import * as serviceWorker from "./serviceWorker";
 ReactDOM.render(
   <React.StrictMode>
     <div className="qr-wrapper">
-      <p>Join:</p>
+      <p>JOIN: feelgoodchat.pages.dev</p>
       <img className="qr" src="/qr.png" alt="qr-code-join" />
     </div>
 
