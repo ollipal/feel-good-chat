@@ -34,11 +34,13 @@ firebase.initializeApp({
 const auth = firebase.auth();
 const firestore = firebase.firestore();
 
-const botReplies = ["Please, clean your mouth and take other user into account.",
+const botReplies = [
+  "Please, clean your mouth and take other user into account.",
   "Please, try to be a more respectful for others.",
   "Please, note that you cannot continue arguing like that.",
   "Hey, wait a bit and calm down.",
-  "This message was not ok."]
+  "This message was not ok.",
+];
 
 function PointView() {
   const userDocPath = `userInfo/${auth.currentUser.uid}`;
@@ -281,11 +283,24 @@ function ChatMessage({ message }) {
     setOpenSB(true);
   };
 
+  const hashCode = function (input) {
+    var hash = 0,
+      i,
+      chr;
+    if (input.length === 0) return hash;
+    for (i = 0; i < input.length; i++) {
+      chr = input.charCodeAt(i);
+      hash = (hash << 5) - hash + chr;
+      hash |= 0; // Convert to 32bit integer
+    }
+    return hash;
+  };
+
   let hidden = "";
   let badMessageReminder = null;
   if (message.pointChange < 0 && message.toxic) {
     /* Pick random reply from an array */
-    badMessageReminder = botReplies[Math.floor(Math.random() * botReplies.length)];
+    badMessageReminder = botReplies[hashCode(message.text) % botReplies.length];
     hidden = " hidden";
 
     const badCategories = [];
@@ -324,7 +339,9 @@ function ChatMessage({ message }) {
             toxic={hidden !== ""}
           />
           {message.isNice && reportedBy.length === 0 && (
-            <div style={{ padding: "3px", color: "#90db2d" }}>Nice message!</div>
+            <div style={{ padding: "3px", color: "#90db2d" }}>
+              Nice message!
+            </div>
           )}
           {reportedBy.length !== 0 &&
             !reportedBy.includes(auth.currentUser.uid) &&
