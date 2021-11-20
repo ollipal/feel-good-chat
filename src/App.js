@@ -6,7 +6,7 @@ import "firebase/firestore";
 import "firebase/auth";
 
 import { useAuthState } from "react-firebase-hooks/auth";
-import { useCollectionData } from "react-firebase-hooks/firestore";
+import { useCollectionData, useDocumentData } from "react-firebase-hooks/firestore";
 import ChatMessageMenu from "./components/ChatMessageMenu";
 import { predictSentiment, predictToxic } from "./messageProcessing"
 
@@ -23,6 +23,13 @@ firebase.initializeApp({
 const auth = firebase.auth();
 const firestore = firebase.firestore();
 
+function PointView() {
+  const userDocPath = `userInfo/${auth.currentUser.uid}`
+  const myRef = firestore.doc(userDocPath)
+  const [me] = useDocumentData(myRef)
+  return (<h3>{me ? me.points : 0}</h3>)
+}
+
 function App() {
   const [user] = useAuthState(auth);
 
@@ -30,9 +37,9 @@ function App() {
     <div className="App">
       <header>
         <h1>FeelGoodChat</h1>
+        {user ? <PointView /> : null}
         <SignOut />
       </header>
-
       <section>{user ? <ChatRoom /> : <SignIn />}</section>
     </div>
   );
@@ -73,6 +80,10 @@ function ChatRoom() {
 
   const [messages] = useCollectionData(query, { idField: "id" });
 
+  const userDocPath = `userInfo/${auth.currentUser.uid}`
+  const myRef = firestore.doc(userDocPath)
+  const [me] = useDocumentData(myRef)
+
   const [formValue, setFormValue] = useState("");
 
   useEffect(() => {
@@ -83,17 +94,38 @@ function ChatRoom() {
     e.preventDefault();
 
     const sentiment = await predictSentiment(formValue)
+    let toxic = null
     console.log('sentiment:', sentiment)
-    const toxic = await predictToxic(formValue)
-    console.log('toxic:', toxic)
+    let pointChange = 0
+    if (sentiment.negative > 0.4) {
+      toxic = await predictToxic(formValue)
+      console.log('toxic:', toxic)
+      pointChange = -Object.values(toxic).reduce((a,c) => a+c)*5
+    } else if (sentiment.positive > 0.3) {
+      pointChange = sentiment.positive*5
+    }
+    console.log('pointChange:', pointChange)
+    if (pointChange) {
+      const currentPoints = me ? me.points : 0
+      await myRef.set({
+        points: currentPoints + pointChange
+      })
+    }
+    
     const { uid, photoURL } = auth.currentUser;
 
-    await messagesRef.add({
+    const newMessage = {
       text: formValue,
       createdAt: firebase.firestore.FieldValue.serverTimestamp(),
       uid,
       photoURL,
-    });
+      sentiment,
+      pointChange
+    }
+    if (toxic) {
+      newMessage.toxic = toxic
+    }
+    await messagesRef.add(newMessage);
 
     setFormValue("");
     dummy.current.scrollIntoView({ behavior: "smooth" });
