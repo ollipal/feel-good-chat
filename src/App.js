@@ -173,6 +173,7 @@ function ChatRoom() {
       agreedBy: [],
       disagreedBy: [],
       isNice: false,
+      reportVerified: false,
     };
     if (toxic) {
       newMessage.toxic = toxic;
@@ -257,6 +258,11 @@ function ChatMessage({ message }) {
     };
     await trainingDataRef.add(newMessage);
 
+    /* Set the report verified that we know to stop showing the message */
+    messageRef.update({
+      reportVerified: true,
+    });
+
     // Show verification
     setOpenSB(true);
   };
@@ -294,49 +300,51 @@ function ChatMessage({ message }) {
 
   return (
     <>
-      <div className={`message ${messageClass}${positive}${hidden}`}>
-        <ChatMessageMenu
-          photoURL={photoURL}
-          report={report}
-          handleNice={handleNice}
-          isNice={message.isNice}
-          hasUserReported={message.reportedBy.length !== 0}
-          myMessage={uid === auth.currentUser.uid}
-          isRobot={false}
-          toxic={hidden !== ""}
-        />
-        <p>{text}</p>
-        {message.isNice && reportedBy.length === 0 && (
-          <div style={{ padding: "3px", color: "#90db2d" }}>Nice message!</div>
-        )}
-        {reportedBy.length !== 0 &&
-          !reportedBy.includes(auth.currentUser.uid) &&
-          !(uid === auth.currentUser.uid) &&
-          !(
-            agreedBy.includes(auth.currentUser.uid) ||
-            disagreedBy.includes(auth.currentUser.uid)
-          ) && (
-            <>
-              <div style={{ padding: "3px", color: "#1976d2" }}>
-                Reported. Verify?
-              </div>
-              <IconButton
-                aria-label="positive"
-                color="primary"
-                onClick={agreeWithReport}
-              >
-                <CheckIcon />
-              </IconButton>
-              <IconButton
-                aria-label="negative"
-                color="primary"
-                onClick={disagreeWithReport}
-              >
-                <HighlightOffIcon />
-              </IconButton>
-            </>
+      {!message.reportVerified && (
+        <div className={`message ${messageClass}${positive}${hidden}`}>
+          <ChatMessageMenu
+            photoURL={photoURL}
+            report={report}
+            handleNice={handleNice}
+            isNice={message.isNice}
+            hasUserReported={message.reportedBy.length !== 0}
+            myMessage={uid === auth.currentUser.uid}
+            isRobot={false}
+            toxic={hidden !== ""}
+          />
+          <p>{text}</p>
+          {message.isNice && reportedBy.length === 0 && (
+            <div style={{ padding: "3px", color: "#90db2d" }}>Nice message!</div>
           )}
-      </div>
+          {reportedBy.length !== 0 &&
+            !reportedBy.includes(auth.currentUser.uid) &&
+            !(uid === auth.currentUser.uid) &&
+            !(
+              agreedBy.includes(auth.currentUser.uid) ||
+              disagreedBy.includes(auth.currentUser.uid)
+            ) && (
+              <>
+                <div style={{ padding: "3px", color: "#1976d2" }}>
+                  Reported. Verify?
+                </div>
+                <IconButton
+                  aria-label="positive"
+                  color="primary"
+                  onClick={agreeWithReport}
+                >
+                  <CheckIcon />
+                </IconButton>
+                <IconButton
+                  aria-label="negative"
+                  color="primary"
+                  onClick={disagreeWithReport}
+                >
+                  <HighlightOffIcon />
+                </IconButton>
+              </>
+            )}
+        </div>
+      )}
       {badMessageReminder ? (
         <div className={`message ${messageClass}`}>
           <ChatMessageMenu
