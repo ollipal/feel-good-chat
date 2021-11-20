@@ -60,3 +60,13 @@ code {
   /* text-align: center;
   vertical-align: middle; */
 }
+
+
+@media screen and (max-device-width: 950px) {
+  .instruction-wrapper {
+    display: none;
+  }
+  .qr-wrapper {
+    display: none;
+  }
+}

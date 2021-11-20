@@ -19,6 +19,7 @@ import IconButton from "@mui/material/IconButton";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import { Typography } from "@mui/material";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
 
 firebase.initializeApp({
   apiKey: "AIzaSyBzYHyp_jBzGldqMBCessjUMlCLGf9x2EM",
@@ -53,10 +54,11 @@ function PointView() {
   };
   return (
     <>
+      <h3>
+        {auth.currentUser.displayName}, score: {me ? me.points.toFixed(2) : 0}
+      </h3>
       <div>
-        <h3 onClick={handleClick}>
-          {auth.currentUser.displayName}, score: {me ? me.points.toFixed(2) : 0}
-        </h3>
+        <MoreVertIcon onClick={handleClick} />
         <Menu
           id="basic-menu"
           anchorEl={anchorEl}
