@@ -304,6 +304,10 @@ function ChatMessage({ message }) {
         <div className={`message ${messageClass}${positive}${hidden}`}>
           <ChatMessageMenu
             photoURL={photoURL}
+            text={text}
+            messageClass={messageClass}
+            positive={positive}
+            hidden={hidden}
             report={report}
             handleNice={handleNice}
             isNice={message.isNice}
@@ -312,7 +316,6 @@ function ChatMessage({ message }) {
             isRobot={false}
             toxic={hidden !== ""}
           />
-          <p>{text}</p>
           {message.isNice && reportedBy.length === 0 && (
             <div style={{ padding: "3px", color: "#90db2d" }}>Nice message!</div>
           )}
@@ -349,6 +352,7 @@ function ChatMessage({ message }) {
         <div className={`message ${messageClass}`}>
           <ChatMessageMenu
             photoURL={"/robot.png"}
+            text={text}
             report={report}
             handleNice={handleNice}
             isNice={message.isNice}

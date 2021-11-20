@@ -9,6 +9,10 @@ import InfoSnackBar from "./InfoSnackBar";
 
 export default function ChatMessageMenu({
   photoURL,
+  text,
+  messageClass,
+  positive,
+  hidden,
   report,
   handleNice,
   isNice,
@@ -41,7 +45,7 @@ export default function ChatMessageMenu({
   };
 
   return (
-    <div>
+    <div className={`message ${messageClass}${positive}${hidden}`}>
       <img
         onClick={!myMessage && !toxic && !((isNice || isRobot) && hasUserReported) ? handleClick : () => {}}
         src={
@@ -49,6 +53,7 @@ export default function ChatMessageMenu({
         }
         alt="logo"
       />
+      <p onClick={!myMessage && !toxic && !((isNice || isRobot) && hasUserReported) ? handleClick : () => {}}>{text}</p>
       <Menu
         id="basic-menu"
         anchorEl={anchorEl}
