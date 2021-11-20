@@ -32,7 +32,11 @@ function PointView() {
   const userDocPath = `userInfo/${auth.currentUser.uid}`;
   const myRef = firestore.doc(userDocPath);
   const [me] = useDocumentData(myRef);
-  return <h3>{me ? me.points : 0}</h3>;
+  return (
+    <>
+      <h3>{auth.currentUser.displayName}, score: {me ? me.points.toFixed(2) : 0}</h3>
+    </>
+  );
 }
 
 function App() {
