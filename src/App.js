@@ -6,10 +6,12 @@ import "firebase/firestore";
 import "firebase/auth";
 
 import { useAuthState } from "react-firebase-hooks/auth";
-import { useCollectionData, useDocumentData } from "react-firebase-hooks/firestore";
+import {
+  useCollectionData,
+  useDocumentData,
+} from "react-firebase-hooks/firestore";
 import ChatMessageMenu from "./components/ChatMessageMenu";
-import { predictSentiment, predictToxic } from "./messageProcessing"
-
+import { predictSentiment, predictToxic } from "./messageProcessing";
 
 firebase.initializeApp({
   apiKey: "AIzaSyBzYHyp_jBzGldqMBCessjUMlCLGf9x2EM",
@@ -24,10 +26,10 @@ const auth = firebase.auth();
 const firestore = firebase.firestore();
 
 function PointView() {
-  const userDocPath = `userInfo/${auth.currentUser.uid}`
-  const myRef = firestore.doc(userDocPath)
-  const [me] = useDocumentData(myRef)
-  return (<h3>{me ? me.points : 0}</h3>)
+  const userDocPath = `userInfo/${auth.currentUser.uid}`;
+  const myRef = firestore.doc(userDocPath);
+  const [me] = useDocumentData(myRef);
+  return <h3>{me ? me.points : 0}</h3>;
 }
 
 function App() {
@@ -80,9 +82,9 @@ function ChatRoom() {
 
   const [messages] = useCollectionData(query, { idField: "id" });
 
-  const userDocPath = `userInfo/${auth.currentUser.uid}`
-  const myRef = firestore.doc(userDocPath)
-  const [me] = useDocumentData(myRef)
+  const userDocPath = `userInfo/${auth.currentUser.uid}`;
+  const myRef = firestore.doc(userDocPath);
+  const [me] = useDocumentData(myRef);
 
   const [formValue, setFormValue] = useState("");
 
@@ -93,25 +95,25 @@ function ChatRoom() {
   const sendMessage = async (e) => {
     e.preventDefault();
 
-    const sentiment = await predictSentiment(formValue)
-    let toxic = null
-    console.log('sentiment:', sentiment)
-    let pointChange = 0
+    const sentiment = await predictSentiment(formValue);
+    let toxic = null;
+    console.log("sentiment:", sentiment);
+    let pointChange = 0;
     if (sentiment.negative > 0.4) {
-      toxic = await predictToxic(formValue)
-      console.log('toxic:', toxic)
-      pointChange = -Object.values(toxic).reduce((a,c) => a+c)*5
+      toxic = await predictToxic(formValue);
+      console.log("toxic:", toxic);
+      pointChange = -Object.values(toxic).reduce((a, c) => a + c) * 5;
     } else if (sentiment.positive > 0.3) {
-      pointChange = sentiment.positive*5
+      pointChange = sentiment.positive * 5;
     }
-    console.log('pointChange:', pointChange)
+    console.log("pointChange:", pointChange);
     if (pointChange) {
-      const currentPoints = me ? me.points : 0
+      const currentPoints = me ? me.points : 0;
       await myRef.set({
-        points: currentPoints + pointChange
-      })
+        points: currentPoints + pointChange,
+      });
     }
-    
+
     const { uid, photoURL } = auth.currentUser;
 
     const newMessage = {
@@ -120,10 +122,13 @@ function ChatRoom() {
       uid,
       photoURL,
       sentiment,
-      pointChange
-    }
+      pointChange,
+      reportedBy: null,
+      agreeReport: 0,
+      disagreeReport: 0,
+    };
     if (toxic) {
-      newMessage.toxic = toxic
+      newMessage.toxic = toxic;
     }
     await messagesRef.add(newMessage);
 
@@ -155,15 +160,21 @@ function ChatRoom() {
   );
 }
 
-function ChatMessage(props) {
-  const { text, uid, photoURL } = props.message;
+function ChatMessage({ message }) {
+  const { text, uid, photoURL } = message;
 
   const messageClass = uid === auth.currentUser.uid ? "sent" : "received";
+
+  const report = () => {
+    console.log(message);
+    const messageRef = firestore.doc(`messages/${message.id}`);
+    messageRef.update({ reportedBy: auth.currentUser.uid });
+  };
 
   return (
     <>
       <div className={`message ${messageClass}`}>
-        <ChatMessageMenu photoURL={photoURL} />
+        <ChatMessageMenu photoURL={photoURL} report={report} />
         <p>{text}</p>
       </div>
     </>

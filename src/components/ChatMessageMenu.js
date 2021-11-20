@@ -6,12 +6,18 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import FlagIcon from "@mui/icons-material/Flag";
 import PlusOneIcon from "@mui/icons-material/PlusOne";
 
-export default function ChatMessageMenu({ photoURL }) {
+export default function ChatMessageMenu({ photoURL, report }) {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
+
+  const reportMessage = () => {
+    report();
+    handleClose();
+  };
+
   const handleClose = () => {
     setAnchorEl(null);
   };
@@ -41,7 +47,7 @@ export default function ChatMessageMenu({ photoURL }) {
           </ListItemIcon>
           <ListItemText>Nice message</ListItemText>
         </MenuItem>
-        <MenuItem onClick={handleClose}>
+        <MenuItem onClick={reportMessage}>
           <ListItemIcon>
             <FlagIcon fontSize="small" />
           </ListItemIcon>
