@@ -7,6 +7,7 @@ import "firebase/auth";
 
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useCollectionData } from "react-firebase-hooks/firestore";
+import ChatMessageMenu from "./components/ChatMessageMenu";
 
 firebase.initializeApp({
   apiKey: "AIzaSyBzYHyp_jBzGldqMBCessjUMlCLGf9x2EM",
@@ -124,12 +125,7 @@ function ChatMessage(props) {
   return (
     <>
       <div className={`message ${messageClass}`}>
-        <img
-          src={
-            photoURL || "https://api.adorable.io/avatars/23/abott@adorable.png"
-          }
-          alt="logo"
-        />
+        <ChatMessageMenu photoURL={photoURL} />
         <p>{text}</p>
       </div>
     </>
