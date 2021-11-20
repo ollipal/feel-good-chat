@@ -234,15 +234,29 @@ function ChatMessage({ message }) {
       });
   };
 
-  const handlePositive = () => {
+  const agreeWithReport = async (e) => {
+    e.preventDefault();
+
     const messageRef = firestore.doc(`messages/${message.id}`);
     messageRef.update({
       agreedBy: [...message.agreedBy, auth.currentUser.uid],
     });
+    
+    /* User has verified that the reported message was reported for a reason,
+    * so we store it for a further model teaching purposes
+    */
+    const trainingDataRef = firestore.collection("trainingData");
+    const newMessage = {
+      text: message.text,
+      sentBy: message.uid,
+    };
+    await trainingDataRef.add(newMessage);
+    
+    // Show verification
     setOpenSB(true);
   };
 
-  const handleNegative = () => {
+  const disagreeWithReport = () => {
     const messageRef = firestore.doc(`messages/${message.id}`);
     messageRef.update({
       disagreedBy: [...message.disagreedBy, auth.currentUser.uid],
@@ -299,14 +313,14 @@ function ChatMessage({ message }) {
               <IconButton
                 aria-label="positive"
                 color="primary"
-                onClick={handlePositive}
+                onClick={agreeWithReport}
               >
                 <CheckIcon />
               </IconButton>
               <IconButton
                 aria-label="negative"
                 color="primary"
-                onClick={handleNegative}
+                onClick={disagreeWithReport}
               >
                 <HighlightOffIcon />
               </IconButton>
