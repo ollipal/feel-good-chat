@@ -8,6 +8,8 @@ import "firebase/auth";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useCollectionData } from "react-firebase-hooks/firestore";
 import ChatMessageMenu from "./components/ChatMessageMenu";
+import { predictSentiment, predictToxic } from "./messageProcessing"
+
 
 firebase.initializeApp({
   apiKey: "AIzaSyBzYHyp_jBzGldqMBCessjUMlCLGf9x2EM",
@@ -80,6 +82,10 @@ function ChatRoom() {
   const sendMessage = async (e) => {
     e.preventDefault();
 
+    const sentiment = await predictSentiment(formValue)
+    console.log('sentiment:', sentiment)
+    const toxic = await predictToxic(formValue)
+    console.log('toxic:', toxic)
     const { uid, photoURL } = auth.currentUser;
 
     await messagesRef.add({

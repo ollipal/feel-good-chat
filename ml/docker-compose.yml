@@ -1,0 +1,20 @@
+version: '3'
+services:
+  
+  maxTextSentimentClassifier:
+    image: quay.io/codait/max-text-sentiment-classifier
+    container_name: sentiment
+    ports:
+      - "5555:5000"
+  
+  maxToxicCommentClassifier:
+    image: quay.io/codait/max-toxic-comment-classifier
+    container_name: toxic
+    ports:
+      - "5556:5000"
+  
+  cors:
+    image: redocly/cors-anywhere
+    container_name: cors
+    ports:
+      - "3000:8080"
