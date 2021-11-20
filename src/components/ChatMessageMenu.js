@@ -5,6 +5,7 @@ import ListItemText from "@mui/material/ListItemText";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import FlagIcon from "@mui/icons-material/Flag";
 import PlusOneIcon from "@mui/icons-material/PlusOne";
+import InfoSnackBar from "./InfoSnackBar";
 
 export default function ChatMessageMenu({ photoURL, report }) {
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -12,9 +13,11 @@ export default function ChatMessageMenu({ photoURL, report }) {
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
+  const [openSB, setOpenSB] = React.useState(false);
 
   const reportMessage = () => {
     report();
+    setOpenSB(true);
     handleClose();
   };
 
@@ -54,6 +57,7 @@ export default function ChatMessageMenu({ photoURL, report }) {
           <ListItemText>Report message</ListItemText>
         </MenuItem>
       </Menu>
+      <InfoSnackBar openSB={openSB} setOpenSB={setOpenSB} />
     </div>
   );
 }
