@@ -260,6 +260,7 @@ function ChatMessage({ message }) {
             disagreedBy.includes(auth.currentUser.uid)
           ) && (
             <>
+              <div style={{padding: "3px", color: "#1976d2"}}>Reported. Verify?</div>
               <IconButton
                 aria-label="positive"
                 color="primary"
