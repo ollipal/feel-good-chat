@@ -115,6 +115,7 @@ function ChatRoom() {
   const query = messagesRef.orderBy("createdAt").limit(25);
 
   const [messages] = useCollectionData(query, { idField: "id" });
+  const lastMessageLen = useRef(0);
 
   const userDocPath = `userInfo/${auth.currentUser.uid}`;
   const myRef = firestore.doc(userDocPath);
@@ -124,7 +125,13 @@ function ChatRoom() {
   const [sending, setSending] = useState(false);
 
   useEffect(() => {
-    setTimeout(() => dummy.current.scrollIntoView({ behavior: "smooth" }), 250);
+    if (messages && lastMessageLen.current !== messages.length) {
+      lastMessageLen.current = messages.length;
+      setTimeout(
+        () => dummy.current.scrollIntoView({ behavior: "smooth" }),
+        250
+      );
+    }
   }, [messages]);
 
   const sendMessage = async (e) => {
