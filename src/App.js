@@ -300,7 +300,7 @@ function ChatMessage({ message }) {
           toxic={hidden !== ""}
         />
         <p>{text}</p>
-        {message.isNice && (
+        {message.isNice && reportedBy.length === 0 && (
           <div style={{ padding: "3px", color: "#90db2d" }}>Nice message!</div>
         )}
         {reportedBy.length !== 0 &&
