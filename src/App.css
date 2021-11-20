@@ -40,6 +40,7 @@ main {
   overflow-y: scroll;
   display: flex;
   flex-direction: column;
+  overflow-x: hidden;
 }
 
 main::-webkit-scrollbar {
@@ -141,18 +142,18 @@ p {
   color: white;
   background: #0b93f6;
   align-self: flex-end;
-  word-break: break-all;
+  word-break: break-word;
 }
 .received p {
   background: #e5e5ea;
   color: black;
-  word-break: break-all;
+  word-break: break-word;
 }
 
 .positive p {
   background-color: #90db2d !important;
   color: white !important;
-  word-break: break-all;
+  word-break: break-word;
 }
 
 .message .robot {

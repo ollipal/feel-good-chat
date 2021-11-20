@@ -18,7 +18,7 @@ By being positive and nice to others, you gain positivity score that will unlock
 
 Negative behaviour is moderated by our AI, and you can help it to improve by reporting bad behaviour, and voting other reports.
 
-You can also highlight nice or helpful messages by clicking them, which improves the user's score.
+You can also highlight nice or helpful messages, which improves the user's score.
       `}</div>
     </div>
     <App />
