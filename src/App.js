@@ -12,6 +12,7 @@ import {
   useDocumentData,
 } from "react-firebase-hooks/firestore";
 import ChatMessageMenu from "./components/ChatMessageMenu";
+import InfoSnackBar from "./components/InfoSnackBar";
 import { predictSentiment, predictToxic } from "./messageProcessing";
 import CheckIcon from "@mui/icons-material/Check";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
@@ -206,6 +207,8 @@ function ChatMessage({ message }) {
 
   const messageClass = uid === auth.currentUser.uid ? "sent" : "received";
 
+  const [openSB, setOpenSB] = React.useState(false);
+
   const report = () => {
     console.log(message);
     const messageRef = firestore.doc(`messages/${message.id}`);
@@ -217,6 +220,7 @@ function ChatMessage({ message }) {
     messageRef.update({
       agreedBy: [...message.agreedBy, auth.currentUser.uid],
     });
+    setOpenSB(true);
   };
 
   const handleNegative = () => {
@@ -224,6 +228,7 @@ function ChatMessage({ message }) {
     messageRef.update({
       disagreedBy: [...message.disagreedBy, auth.currentUser.uid],
     });
+    setOpenSB(true);
   };
 
   let badMessageReminder = null;
@@ -248,7 +253,7 @@ function ChatMessage({ message }) {
       <div className={`message ${messageClass}`}>
         <ChatMessageMenu photoURL={photoURL} report={report} />
         <p>{text}</p>
-        {reportedBy.length !== 0 &&
+        {reportedBy.length !== 0 && !(reportedBy.includes(auth.currentUser.uid)) &&
           !(uid === auth.currentUser.uid) &&
           !(
             agreedBy.includes(auth.currentUser.uid) ||
@@ -280,6 +285,7 @@ function ChatMessage({ message }) {
           ) : null}
         </div>
       ) : null}
+      <InfoSnackBar openSB={openSB} setOpenSB={setOpenSB} />
     </>
   );
 }
