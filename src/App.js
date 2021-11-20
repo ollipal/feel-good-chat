@@ -327,6 +327,7 @@ function ChatMessage({ message }) {
           <ChatMessageMenu
             photoURL={photoURL}
             text={text}
+            printText={true}
             messageClass={messageClass}
             positive={positive}
             hidden={hidden}
@@ -377,6 +378,7 @@ function ChatMessage({ message }) {
           <ChatMessageMenu
             photoURL={"/robot.png"}
             text={text}
+            printText={false}
             report={report}
             handleNice={handleNice}
             isNice={message.isNice}
