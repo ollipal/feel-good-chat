@@ -12,6 +12,9 @@ import {
 } from "react-firebase-hooks/firestore";
 import ChatMessageMenu from "./components/ChatMessageMenu";
 import { predictSentiment, predictToxic } from "./messageProcessing";
+import CheckIcon from '@mui/icons-material/Check';
+import HighlightOffIcon from '@mui/icons-material/HighlightOff';
+import IconButton from "@mui/material/IconButton";
 
 firebase.initializeApp({
   apiKey: "AIzaSyBzYHyp_jBzGldqMBCessjUMlCLGf9x2EM",
@@ -161,7 +164,7 @@ function ChatRoom() {
 }
 
 function ChatMessage({ message }) {
-  const { text, uid, photoURL } = message;
+  const { text, uid, photoURL, reportedBy } = message;
 
   const messageClass = uid === auth.currentUser.uid ? "sent" : "received";
 
@@ -176,6 +179,16 @@ function ChatMessage({ message }) {
       <div className={`message ${messageClass}`}>
         <ChatMessageMenu photoURL={photoURL} report={report} />
         <p>{text}</p>
+        {reportedBy && reportedBy !== auth.currentUser.uid &&
+          <>
+            <IconButton aria-label="positive" color="primary">
+              <CheckIcon/>
+            </IconButton>
+            <IconButton aria-label="negative" color="primary">
+              <HighlightOffIcon/>
+            </IconButton>
+          </>
+        }
       </div>
     </>
   );
