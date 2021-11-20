@@ -126,8 +126,8 @@ function ChatRoom() {
   const [sending, setSending] = useState(false);
 
   useEffect(() => {
-    setTimeout(() => dummy.current.scrollIntoView({ behavior: "smooth" }), 500);
-  }, []);
+    setTimeout(() => dummy.current.scrollIntoView({ behavior: "smooth" }), 250);
+  }, [messages]);
 
   const sendMessage = async (e) => {
     e.preventDefault();
