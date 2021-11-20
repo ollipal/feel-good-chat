@@ -34,6 +34,12 @@ firebase.initializeApp({
 const auth = firebase.auth();
 const firestore = firebase.firestore();
 
+const botReplies = ["Please, clean your mouth and take other user into account.",
+  "Please, try to be a more respectful for others.",
+  "Please, note that you cannot continue arguing like that.",
+  "Hey, wait a bit and calm down.",
+  "This message was not ok."]
+
 function PointView() {
   const userDocPath = `userInfo/${auth.currentUser.uid}`;
   const myRef = firestore.doc(userDocPath);
@@ -278,7 +284,8 @@ function ChatMessage({ message }) {
   let hidden = "";
   let badMessageReminder = null;
   if (message.pointChange < 0 && message.toxic) {
-    badMessageReminder = "This message was not ok!";
+    /* Pick random reply from an array */
+    badMessageReminder = botReplies[Math.floor(Math.random() * botReplies.length)];
     hidden = " hidden";
 
     const badCategories = [];
