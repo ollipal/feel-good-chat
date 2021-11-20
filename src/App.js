@@ -16,6 +16,9 @@ import { predictSentiment, predictToxic } from "./messageProcessing";
 import CheckIcon from "@mui/icons-material/Check";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import IconButton from "@mui/material/IconButton";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import { Typography } from "@mui/material";
 
 firebase.initializeApp({
   apiKey: "AIzaSyBzYHyp_jBzGldqMBCessjUMlCLGf9x2EM",
@@ -33,11 +36,42 @@ function PointView() {
   const userDocPath = `userInfo/${auth.currentUser.uid}`;
   const myRef = firestore.doc(userDocPath);
   const [me] = useDocumentData(myRef);
+
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const logOut = () => {
+    handleClose();
+    auth.signOut();
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
   return (
     <>
-      <h3>
-        {auth.currentUser.displayName}, score: {me ? me.points.toFixed(2) : 0}
-      </h3>
+      <div>
+        <h3 onClick={handleClick}>
+          {auth.currentUser.displayName}, score: {me ? me.points.toFixed(2) : 0}
+        </h3>
+        <Menu
+          id="basic-menu"
+          anchorEl={anchorEl}
+          open={open}
+          onClose={handleClose}
+          autoFocus={false}
+          MenuListProps={{
+            "aria-labelledby": "basic-button",
+          }}
+        >
+          <MenuItem onClick={logOut}>
+            <Typography sx={{ color: "black" }}>Log out</Typography>
+          </MenuItem>
+        </Menu>
+      </div>
     </>
   );
 }
@@ -47,10 +81,9 @@ function App() {
 
   return (
     <div className="App">
-      <header>
+      <header className="main-header">
         <h1>FeelGoodChat</h1>
         {user ? <PointView /> : null}
-        <SignOut />
       </header>
       <section>{user ? <ChatRoom /> : <SignIn />}</section>
     </div>
@@ -72,16 +105,6 @@ function SignIn() {
         Do not violate the community guidelines or you will be banned for life!
       </p>
     </>
-  );
-}
-
-function SignOut() {
-  return (
-    auth.currentUser && (
-      <button className="sign-out" onClick={() => auth.signOut()}>
-        Sign Out
-      </button>
-    )
   );
 }
 
