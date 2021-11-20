@@ -126,8 +126,8 @@ function ChatRoom() {
   const [sending, setSending] = useState(false);
 
   useEffect(() => {
-    setTimeout(() => dummy.current.scrollIntoView({ behavior: "smooth" }), 500);
-  }, []);
+    setTimeout(() => dummy.current.scrollIntoView({ behavior: "smooth" }), 250);
+  }, [messages]);
 
   const sendMessage = async (e) => {
     e.preventDefault();
@@ -234,15 +234,29 @@ function ChatMessage({ message }) {
       });
   };
 
-  const handlePositive = () => {
+  const agreeWithReport = async (e) => {
+    e.preventDefault();
+
     const messageRef = firestore.doc(`messages/${message.id}`);
     messageRef.update({
       agreedBy: [...message.agreedBy, auth.currentUser.uid],
     });
+    
+    /* User has verified that the reported message was reported for a reason,
+    * so we store it for a further model teaching purposes
+    */
+    const trainingDataRef = firestore.collection("trainingData");
+    const newMessage = {
+      text: message.text,
+      sentBy: message.uid,
+    };
+    await trainingDataRef.add(newMessage);
+    
+    // Show verification
     setOpenSB(true);
   };
 
-  const handleNegative = () => {
+  const disagreeWithReport = () => {
     const messageRef = firestore.doc(`messages/${message.id}`);
     messageRef.update({
       disagreedBy: [...message.disagreedBy, auth.currentUser.uid],
@@ -279,6 +293,7 @@ function ChatMessage({ message }) {
           positive={message.sentiment.positive}
           isNice={message.isNice}
           myMessage={uid === auth.currentUser.uid}
+          isRobot={false}
         />
         <p>{text}</p>
         {message.isNice && (
@@ -298,14 +313,14 @@ function ChatMessage({ message }) {
               <IconButton
                 aria-label="positive"
                 color="primary"
-                onClick={handlePositive}
+                onClick={agreeWithReport}
               >
                 <CheckIcon />
               </IconButton>
               <IconButton
                 aria-label="negative"
                 color="primary"
-                onClick={handleNegative}
+                onClick={disagreeWithReport}
               >
                 <HighlightOffIcon />
               </IconButton>
@@ -321,6 +336,7 @@ function ChatMessage({ message }) {
             positive={message.sentiment.positive}
             isNice={message.isNice}
             myMessage={uid === auth.currentUser.uid}
+            isRobot={true}
           />
           {badMessageReminder ? (
             <p className="robot">{badMessageReminder}</p>
