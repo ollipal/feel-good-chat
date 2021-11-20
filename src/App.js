@@ -109,7 +109,10 @@ function ChatRoom() {
     if (sentiment.negative > 0.4) {
       toxic = await predictToxic(formValue);
       console.log("toxic:", toxic);
-      pointChange = -Object.values(toxic).reduce((a, c) => a + c) * 5;
+      const total = Object.values(toxic).reduce((a, c) => a + c);
+      if (total > 0.1) {
+        pointChange = -total*5
+      }
     } else if (sentiment.positive > 0.3) {
       pointChange = sentiment.positive * 5;
     }
@@ -173,6 +176,7 @@ function ChatMessage({ message }) {
   const messageClass = uid === auth.currentUser.uid ? "sent" : "received";
 
   const report = () => {
+    console.log(message);
     const messageRef = firestore.doc(`messages/${message.id}`);
     messageRef.update({ reportedBy: auth.currentUser.uid });
   };
@@ -185,6 +189,22 @@ function ChatMessage({ message }) {
   const handleNegative = () => {
     const messageRef = firestore.doc(`messages/${message.id}`);
     messageRef.update({ disagreedBy: [...message.disagreedBy, auth.currentUser.uid] });
+  }
+
+  let badMessageReminder = null
+  if (message.pointChange < 0 && message.toxic) {
+    badMessageReminder = 'This message was not ok!'
+    
+    const badCategories = []
+    for (const [key, value] of Object.entries(message.toxic)) {
+      if (value > 0.3) {
+        badCategories.push(key)
+      }
+    }
+    if (badCategories.length) {
+      badMessageReminder += ` It seems to be ${badCategories.join(', ')}.`
+    }
+    badMessageReminder += " Remember you lose points if you send bad messages :)"
   }
 
   return (
@@ -204,6 +224,10 @@ function ChatMessage({ message }) {
           </>
         }
       </div>
+      {badMessageReminder ? (<div className={`message ${messageClass}`}>
+        <ChatMessageMenu photoURL={'/robot.png'} report={report} />
+        {badMessageReminder ? <p className="robot">{badMessageReminder}</p> : null}
+      </div>) : null}
     </>
   );
 }

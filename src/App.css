@@ -146,6 +146,10 @@ p {
   color: black;
 }
 
+.message .robot {
+  margin-top: 0px;
+}
+
 img {
   width: 40px;
   height: 40px;
