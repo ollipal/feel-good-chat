@@ -58,7 +58,7 @@ export default function ChatMessageMenu({
           "aria-labelledby": "basic-button",
         }}
       >
-        {!isNice && (
+        {!isNice && !isRobot && (
           <MenuItem onClick={nice}>
             <ListItemIcon>
               <PlusOneIcon fontSize="small" />
