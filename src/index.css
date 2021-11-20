@@ -15,6 +15,7 @@ code {
 .qr-wrapper {
   position: absolute;
   width: calc((100vw - 728px) / 2);
+  max-width: 500px;
 }
 
 .qr-wrapper > p {
@@ -38,4 +39,24 @@ code {
   border-radius: 0;
   padding: 0;
   margin: 10px;
+}
+
+.instruction-wrapper {
+  position: absolute;
+  width: calc((100vw - 728px) / 2);
+  max-width: 500px;
+  top: 0;
+  right: 0;
+}
+
+.instruction-wrapper > div {
+  color: black;
+  max-width: calc((100vw - 728px) / 2);
+  padding: 0;
+  padding-top: 10px;
+  margin: 0;
+  padding: 10px;
+  white-space: pre-wrap;
+  /* text-align: center;
+  vertical-align: middle; */
 }

@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import CircularProgress from "@mui/material/CircularProgress";
 import "./App.css";
 
 import firebase from "firebase/app";
@@ -12,8 +13,8 @@ import {
 } from "react-firebase-hooks/firestore";
 import ChatMessageMenu from "./components/ChatMessageMenu";
 import { predictSentiment, predictToxic } from "./messageProcessing";
-import CheckIcon from '@mui/icons-material/Check';
-import HighlightOffIcon from '@mui/icons-material/HighlightOff';
+import CheckIcon from "@mui/icons-material/Check";
+import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import IconButton from "@mui/material/IconButton";
 
 firebase.initializeApp({
@@ -34,7 +35,9 @@ function PointView() {
   const [me] = useDocumentData(myRef);
   return (
     <>
-      <h3>{auth.currentUser.displayName}, score: {me ? me.points.toFixed(2) : 0}</h3>
+      <h3>
+        {auth.currentUser.displayName}, score: {me ? me.points.toFixed(2) : 0}
+      </h3>
     </>
   );
 }
@@ -94,6 +97,7 @@ function ChatRoom() {
   const [me] = useDocumentData(myRef);
 
   const [formValue, setFormValue] = useState("");
+  const [sending, setSending] = useState(false);
 
   useEffect(() => {
     setTimeout(() => dummy.current.scrollIntoView({ behavior: "smooth" }), 500);
@@ -102,6 +106,7 @@ function ChatRoom() {
   const sendMessage = async (e) => {
     e.preventDefault();
 
+    setSending(true);
     const sentiment = await predictSentiment(formValue);
     let toxic = null;
     console.log("sentiment:", sentiment);
@@ -111,7 +116,7 @@ function ChatRoom() {
       console.log("toxic:", toxic);
       const total = Object.values(toxic).reduce((a, c) => a + c);
       if (total > 0.1) {
-        pointChange = -total*5
+        pointChange = -total * 5;
       }
     } else if (sentiment.positive > 0.3) {
       pointChange = sentiment.positive * 5;
@@ -143,6 +148,7 @@ function ChatRoom() {
     await messagesRef.add(newMessage);
 
     setFormValue("");
+    setSending(false);
     dummy.current.scrollIntoView({ behavior: "smooth" });
   };
 
@@ -163,7 +169,7 @@ function ChatRoom() {
         />
 
         <button type="submit" disabled={!formValue}>
-          Send
+          {sending ? <CircularProgress style={{ color: "white" }} /> : "Send"}
         </button>
       </form>
     </>
@@ -183,28 +189,33 @@ function ChatMessage({ message }) {
 
   const handlePositive = () => {
     const messageRef = firestore.doc(`messages/${message.id}`);
-    messageRef.update({ agreedBy: [...message.agreedBy, auth.currentUser.uid] });
-  }
+    messageRef.update({
+      agreedBy: [...message.agreedBy, auth.currentUser.uid],
+    });
+  };
 
   const handleNegative = () => {
     const messageRef = firestore.doc(`messages/${message.id}`);
-    messageRef.update({ disagreedBy: [...message.disagreedBy, auth.currentUser.uid] });
-  }
+    messageRef.update({
+      disagreedBy: [...message.disagreedBy, auth.currentUser.uid],
+    });
+  };
 
-  let badMessageReminder = null
+  let badMessageReminder = null;
   if (message.pointChange < 0 && message.toxic) {
-    badMessageReminder = 'This message was not ok!'
-    
-    const badCategories = []
+    badMessageReminder = "This message was not ok!";
+
+    const badCategories = [];
     for (const [key, value] of Object.entries(message.toxic)) {
       if (value > 0.3) {
-        badCategories.push(key)
+        badCategories.push(key);
       }
     }
     if (badCategories.length) {
-      badMessageReminder += ` It seems to be ${badCategories.join(', ')}.`
+      badMessageReminder += ` It seems to be ${badCategories.join(", ")}.`;
     }
-    badMessageReminder += " Remember you lose points if you send bad messages :)"
+    badMessageReminder +=
+      " Remember you lose points if you send bad messages :)";
   }
 
   return (
@@ -212,22 +223,38 @@ function ChatMessage({ message }) {
       <div className={`message ${messageClass}`}>
         <ChatMessageMenu photoURL={photoURL} report={report} />
         <p>{text}</p>
-        {reportedBy.length !== 0 && !(uid === auth.currentUser.uid) &&
-          !(agreedBy.includes(auth.currentUser.uid) || disagreedBy.includes(auth.currentUser.uid)) &&
-          <>
-            <IconButton aria-label="positive" color="primary" onClick={handlePositive}>
-              <CheckIcon/>
-            </IconButton>
-            <IconButton aria-label="negative" color="primary" onClick={handleNegative}>
-              <HighlightOffIcon/>
-            </IconButton>
-          </>
-        }
+        {reportedBy.length !== 0 &&
+          !(uid === auth.currentUser.uid) &&
+          !(
+            agreedBy.includes(auth.currentUser.uid) ||
+            disagreedBy.includes(auth.currentUser.uid)
+          ) && (
+            <>
+              <IconButton
+                aria-label="positive"
+                color="primary"
+                onClick={handlePositive}
+              >
+                <CheckIcon />
+              </IconButton>
+              <IconButton
+                aria-label="negative"
+                color="primary"
+                onClick={handleNegative}
+              >
+                <HighlightOffIcon />
+              </IconButton>
+            </>
+          )}
       </div>
-      {badMessageReminder ? (<div className={`message ${messageClass}`}>
-        <ChatMessageMenu photoURL={'/robot.png'} report={report} />
-        {badMessageReminder ? <p className="robot">{badMessageReminder}</p> : null}
-      </div>) : null}
+      {badMessageReminder ? (
+        <div className={`message ${messageClass}`}>
+          <ChatMessageMenu photoURL={"/robot.png"} report={report} />
+          {badMessageReminder ? (
+            <p className="robot">{badMessageReminder}</p>
+          ) : null}
+        </div>
+      ) : null}
     </>
   );
 }

@@ -9,7 +9,17 @@ ReactDOM.render(
     <div className="qr-wrapper">
       <p>Join:</p>
       <img className="qr" src="/qr.png" alt="qr-code-join" />
-      {/* <a href="https://feel-good-chat.pages.dev">feel-good-chat.pages.dev</a> */}
+    </div>
+
+    <div className="instruction-wrapper">
+      <div>{`👋 Hello and welcome to FeelGoodChat, a place for having nice conversations.
+
+By being positive and nice to others, you gain positivity score that will unlock in-game items (game TBA).
+
+Negative behaviour is moderated by our AI, and you can help it to improve by reporting not detected bad behaviour, and voting other reports.
+
+You can also make nice messages more visible to others.
+      `}</div>
     </div>
     <App />
   </React.StrictMode>,
