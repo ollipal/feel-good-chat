@@ -1,0 +1,27 @@
+{
+    "name": "ai-functions",
+    "description": "Firebase proxy for AI functions",
+    "dependencies": {
+        "axios": "^0.24.0",
+        "cors": "^2.8.4",
+        "firebase-admin": "^5.2.1",
+        "firebase-functions": "^0.6.2"
+    },
+    "devDependencies": {
+        "eslint": "^6.8.0",
+        "eslint-plugin-promise": "^4.2.1"
+    },
+    "scripts": {
+        "lint": "./node_modules/.bin/eslint --max-warnings=0 .",
+        "serve": "firebase emulators:start --only functions",
+        "shell": "firebase functions:shell",
+        "start": "npm run shell",
+        "deploy": "firebase deploy --only functions",
+        "logs": "firebase functions:log",
+        "compile": "cp ../../../tsconfig.template.json ./tsconfig-compile.json && tsc --project tsconfig-compile.json"
+    },
+    "engines": {
+        "node": "14"
+    },
+    "private": true
+}
