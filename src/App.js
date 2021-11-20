@@ -279,6 +279,7 @@ function ChatMessage({ message }) {
           positive={message.sentiment.positive}
           isNice={message.isNice}
           myMessage={uid === auth.currentUser.uid}
+          isRobot={false}
         />
         <p>{text}</p>
         {message.isNice && (
@@ -321,6 +322,7 @@ function ChatMessage({ message }) {
             positive={message.sentiment.positive}
             isNice={message.isNice}
             myMessage={uid === auth.currentUser.uid}
+            isRobot={true}
           />
           {badMessageReminder ? (
             <p className="robot">{badMessageReminder}</p>

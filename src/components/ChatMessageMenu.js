@@ -14,6 +14,7 @@ export default function ChatMessageMenu({
   positive,
   isNice,
   myMessage,
+  isRobot,
 }) {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
@@ -69,7 +70,10 @@ export default function ChatMessageMenu({
           <ListItemIcon>
             <FlagIcon fontSize="small" />
           </ListItemIcon>
-          <ListItemText>Report message</ListItemText>
+          {isRobot ?
+            (<ListItemText>Report bot</ListItemText>) :
+            (<ListItemText>Report message</ListItemText>)
+          }
         </MenuItem>
       </Menu>
       <InfoSnackBar openSB={openSB} setOpenSB={setOpenSB} />
