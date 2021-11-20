@@ -13,7 +13,7 @@ import {
 } from "react-firebase-hooks/firestore";
 import ChatMessageMenu from "./components/ChatMessageMenu";
 import InfoSnackBar from "./components/InfoSnackBar";
-import { predictSentiment, predictToxic } from "./messageProcessing";
+import { predictSentiment, predictToxic, getBotAnswer } from "./messageProcessing";
 import CheckIcon from "@mui/icons-material/Check";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import IconButton from "@mui/material/IconButton";
@@ -264,6 +264,34 @@ function ChatMessage({ message }) {
 
   let hidden = "";
   let badMessageReminder = null;
+
+  /* 
+  { "Body": {
+    "inputs": {"text": "I don't like you"}
+    }
+  }
+  headers: {"Content-Type": "application/json"}
+  */
+  const fetchAnswer = async () => {
+    const requestOptions = {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+      body: JSON.stringify({ 'inputs': {"text": "I dont like you"},}),
+    };
+    //const url = "https://dlm8qcwh5h.execute-api.eu-north-1.amazonaws.com/test/junctionchatbot";
+    const url = 'https://dlm8qcwh5h.execute-api.eu-north-1.amazonaws.com/test/junctionlarge';
+    const response = await fetch(url, requestOptions);
+    //const data = await response.json();
+  
+    console.log(response);
+    //console.log(data);
+  }
+
+  fetchAnswer();
+  //let answer = getBotAnswer("I dont like you");
+  //console.log(answer);
+
   if (message.pointChange < 0 && message.toxic) {
     badMessageReminder = "This message was not ok!";
     hidden = " hidden";

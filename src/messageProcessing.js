@@ -1,6 +1,7 @@
 const request = require('request');
 
 const BASE_URL = "https://us-central1-feelgoodchat-f4d99.cloudfunctions.net/cors"
+const BOT_URL = "https://dlm8qcwh5h.execute-api.eu-north-1.amazonaws.com/test/junctionlarge"
 
 function predictSentiment(msg) {
     return new Promise((res, rej) => {
@@ -30,4 +31,18 @@ function predictToxic(msg) {
     })
 }
 
-export {predictSentiment, predictToxic}
+function getBotAnswer(msg) {
+    return new Promise((res, rej) => {
+        request.post({url: BOT_URL, json:{to: "openAI", data: {text:[msg]}}}, function (error, response, body) {
+            if (body && body.status === 'ok') {
+                const prediction = body.predictions[0]
+                if (prediction) {
+                    return res(prediction)
+                }
+            }
+            rej(error)
+        });
+    })
+}
+
+export {predictSentiment, predictToxic, getBotAnswer}

@@ -19,6 +19,8 @@ exports.cors = functions.https.onRequest((req, res) => {
     url = "http://35.228.26.125:5555/model/predict"
   } else if (to === "toxic") {
     url = "http://35.228.26.125:5556/model/predict"
+  } else if (to === "openAI") {
+    url = "https://dlm8qcwh5h.execute-api.eu-north-1.amazonaws.com/test/junctionlarge"
   } else {
     res.status(400).send()
     return
