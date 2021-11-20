@@ -215,9 +215,23 @@ function ChatMessage({ message }) {
     messageRef.update({ reportedBy: auth.currentUser.uid });
   };
 
-  const handleNice = () => {
+  const handleNice = async () => {
     const messageRef = firestore.doc(`messages/${message.id}`);
     messageRef.update({ isNice: true });
+    const userRef = firestore.doc(`userInfo/${message.uid}`);
+    userRef
+      .get()
+      .then((doc) => {
+        if (doc.exists) {
+          console.log("Document data:", doc.data());
+          userRef.update({ points: doc.data().points + 5 });
+        } else {
+          console.log("No such document!");
+        }
+      })
+      .catch((error) => {
+        console.log("Error getting document:", error);
+      });
   };
 
   const handlePositive = () => {
@@ -267,14 +281,20 @@ function ChatMessage({ message }) {
           myMessage={uid === auth.currentUser.uid}
         />
         <p>{text}</p>
-        {reportedBy.length !== 0 && !(reportedBy.includes(auth.currentUser.uid)) &&
+        {message.isNice && (
+          <div style={{ padding: "3px", color: "#90db2d" }}>Nice message!</div>
+        )}
+        {reportedBy.length !== 0 &&
+          !reportedBy.includes(auth.currentUser.uid) &&
           !(uid === auth.currentUser.uid) &&
           !(
             agreedBy.includes(auth.currentUser.uid) ||
             disagreedBy.includes(auth.currentUser.uid)
           ) && (
             <>
-              <div style={{padding: "3px", color: "#1976d2"}}>Reported. Verify?</div>
+              <div style={{ padding: "3px", color: "#1976d2" }}>
+                Reported. Verify?
+              </div>
               <IconButton
                 aria-label="positive"
                 color="primary"

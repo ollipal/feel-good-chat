@@ -16,9 +16,9 @@ ReactDOM.render(
 
 By being positive and nice to others, you gain positivity score that will unlock in-game items (game TBA).
 
-Negative behaviour is moderated by our AI, and you can help it to improve by reporting not detected bad behaviour, and voting other reports.
+Negative behaviour is moderated by our AI, and you can help it to improve by reporting bad behaviour, and voting other reports.
 
-You can also higlight nice or helpful messages by clicking them (not available for negative messages).
+You can also highlight nice or helpful messages by clicking them, which improves the user's score.
       `}</div>
     </div>
     <App />
