@@ -55,9 +55,7 @@ function PointView() {
   };
   return (
     <>
-      <h3>
-        {auth.currentUser.displayName}, score: {me ? me.points.toFixed(2) : 0}
-      </h3>
+      <h3>score: {me ? me.points.toFixed(2) : 0}</h3>
       <div>
         <MoreVertIcon onClick={handleClick} />
         <Menu

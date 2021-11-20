@@ -33,6 +33,11 @@ body {
   background-color: #fff;
 }
 
+header > h3 {
+  margin-left: auto;
+  padding-bottom: 4px;
+}
+
 main {
   padding: 10px;
   height: 80vh;
@@ -67,7 +72,7 @@ form {
 }
 
 form button {
-  width: 20%;
+  width: max(20%, 180px);
   background-color: #0b93f6;
 }
 
