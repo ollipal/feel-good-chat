@@ -241,17 +241,17 @@ function ChatMessage({ message }) {
     messageRef.update({
       agreedBy: [...message.agreedBy, auth.currentUser.uid],
     });
-    
+
     /* User has verified that the reported message was reported for a reason,
-    * so we store it for a further model teaching purposes
-    */
+     * so we store it for a further model teaching purposes
+     */
     const trainingDataRef = firestore.collection("trainingData");
     const newMessage = {
       text: message.text,
       sentBy: message.uid,
     };
     await trainingDataRef.add(newMessage);
-    
+
     // Show verification
     setOpenSB(true);
   };
@@ -264,9 +264,11 @@ function ChatMessage({ message }) {
     setOpenSB(true);
   };
 
+  let hidden = "";
   let badMessageReminder = null;
   if (message.pointChange < 0 && message.toxic) {
     badMessageReminder = "This message was not ok!";
+    hidden = " hidden";
 
     const badCategories = [];
     for (const [key, value] of Object.entries(message.toxic)) {
@@ -275,7 +277,9 @@ function ChatMessage({ message }) {
       }
     }
     if (badCategories.length) {
-      badMessageReminder += ` It seems to be ${badCategories.join(", ")}.`;
+      badMessageReminder += ` It seems to be ${badCategories
+        .join(", ")
+        .replace("_", " ")}.`;
     }
     badMessageReminder +=
       " Remember you lose score if you send bad messages :)";
@@ -285,15 +289,15 @@ function ChatMessage({ message }) {
 
   return (
     <>
-      <div className={`message ${messageClass}${positive}`}>
+      <div className={`message ${messageClass}${positive}${hidden}`}>
         <ChatMessageMenu
           photoURL={photoURL}
           report={report}
           handleNice={handleNice}
-          positive={message.sentiment.positive}
           isNice={message.isNice}
           myMessage={uid === auth.currentUser.uid}
           isRobot={false}
+          toxic={hidden !== ""}
         />
         <p>{text}</p>
         {message.isNice && (
@@ -333,7 +337,6 @@ function ChatMessage({ message }) {
             photoURL={"/robot.png"}
             report={report}
             handleNice={handleNice}
-            positive={message.sentiment.positive}
             isNice={message.isNice}
             myMessage={uid === auth.currentUser.uid}
             isRobot={true}

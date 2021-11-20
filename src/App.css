@@ -138,12 +138,28 @@ p {
   flex-direction: row-reverse;
 }
 
+.hidden p {
+  text-shadow: 1px 1px 5px white !important;
+  color: transparent !important;
+}
+
+.hidden:active p {
+  text-shadow: none !important;
+  color: white !important;
+}
+
+.hidden:hover p {
+  text-shadow: none !important;
+  color: white !important;
+}
+
 .sent p {
   color: white;
   background: #0b93f6;
   align-self: flex-end;
   word-break: break-word;
 }
+
 .received p {
   background: #e5e5ea;
   color: black;
@@ -152,7 +168,7 @@ p {
 
 .positive p {
   background-color: #90db2d !important;
-  color: white !important;
+  color: white;
   word-break: break-word;
 }
 
