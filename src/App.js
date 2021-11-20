@@ -126,9 +126,9 @@ function ChatRoom() {
       photoURL,
       sentiment,
       pointChange,
-      reportedBy: null,
-      agreeReport: 0,
-      disagreeReport: 0,
+      reportedBy: [],
+      agreedBy: [],
+      disagreedBy: [],
     };
     if (toxic) {
       newMessage.toxic = toxic;
@@ -164,27 +164,37 @@ function ChatRoom() {
 }
 
 function ChatMessage({ message }) {
-  const { text, uid, photoURL, reportedBy } = message;
+  const { text, uid, photoURL, reportedBy, agreedBy, disagreedBy } = message;
 
   const messageClass = uid === auth.currentUser.uid ? "sent" : "received";
 
   const report = () => {
-    console.log(message);
     const messageRef = firestore.doc(`messages/${message.id}`);
     messageRef.update({ reportedBy: auth.currentUser.uid });
   };
+
+  const handlePositive = () => {
+    const messageRef = firestore.doc(`messages/${message.id}`);
+    messageRef.update({ agreedBy: [...message.agreedBy, auth.currentUser.uid] });
+  }
+
+  const handleNegative = () => {
+    const messageRef = firestore.doc(`messages/${message.id}`);
+    messageRef.update({ disagreedBy: [...message.disagreedBy, auth.currentUser.uid] });
+  }
 
   return (
     <>
       <div className={`message ${messageClass}`}>
         <ChatMessageMenu photoURL={photoURL} report={report} />
         <p>{text}</p>
-        {reportedBy && reportedBy !== auth.currentUser.uid &&
+        {reportedBy.length !== 0 && !(uid === auth.currentUser.uid) &&
+          !(agreedBy.includes(auth.currentUser.uid) || disagreedBy.includes(auth.currentUser.uid)) &&
           <>
-            <IconButton aria-label="positive" color="primary">
+            <IconButton aria-label="positive" color="primary" onClick={handlePositive}>
               <CheckIcon/>
             </IconButton>
-            <IconButton aria-label="negative" color="primary">
+            <IconButton aria-label="negative" color="primary" onClick={handleNegative}>
               <HighlightOffIcon/>
             </IconButton>
           </>
