@@ -12,6 +12,7 @@ export default function ChatMessageMenu({
   report,
   handleNice,
   isNice,
+  hasUserReported,
   myMessage,
   isRobot,
   toxic,
@@ -42,7 +43,7 @@ export default function ChatMessageMenu({
   return (
     <div>
       <img
-        onClick={!myMessage && !toxic ? handleClick : () => {}}
+        onClick={!myMessage && !toxic && !((isNice || isRobot) && hasUserReported) ? handleClick : () => {}}
         src={
           photoURL || "https://api.adorable.io/avatars/23/abott@adorable.png"
         }
@@ -66,16 +67,18 @@ export default function ChatMessageMenu({
             <ListItemText>Nice message</ListItemText>
           </MenuItem>
         )}
-        <MenuItem onClick={reportMessage}>
-          <ListItemIcon>
-            <FlagIcon fontSize="small" />
-          </ListItemIcon>
-          {isRobot ? (
-            <ListItemText>Report bot</ListItemText>
-          ) : (
-            <ListItemText>Report message</ListItemText>
-          )}
-        </MenuItem>
+        {!hasUserReported && (
+          <MenuItem onClick={reportMessage}>
+            <ListItemIcon>
+              <FlagIcon fontSize="small" />
+            </ListItemIcon>
+            {isRobot ? (
+              <ListItemText>Report bot</ListItemText>
+            ) : (
+              <ListItemText>Report message</ListItemText>
+            )}
+          </MenuItem>
+        )}
       </Menu>
       <InfoSnackBar openSB={openSB} setOpenSB={setOpenSB} />
     </div>

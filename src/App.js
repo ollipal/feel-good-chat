@@ -293,6 +293,7 @@ function ChatMessage({ message }) {
           report={report}
           handleNice={handleNice}
           isNice={message.isNice}
+          hasUserReported={message.reportedBy.length !== 0}
           myMessage={uid === auth.currentUser.uid}
           isRobot={false}
           toxic={hidden !== ""}
@@ -336,6 +337,7 @@ function ChatMessage({ message }) {
             report={report}
             handleNice={handleNice}
             isNice={message.isNice}
+            hasUserReported={message.reportedBy.includes(auth.currentUser.uid)}
             myMessage={uid === auth.currentUser.uid}
             isRobot={true}
           />
