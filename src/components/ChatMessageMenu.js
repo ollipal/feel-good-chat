@@ -7,7 +7,14 @@ import FlagIcon from "@mui/icons-material/Flag";
 import PlusOneIcon from "@mui/icons-material/PlusOne";
 import InfoSnackBar from "./InfoSnackBar";
 
-export default function ChatMessageMenu({ photoURL, report }) {
+export default function ChatMessageMenu({
+  photoURL,
+  report,
+  handleNice,
+  positive,
+  isNice,
+  myMessage,
+}) {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
@@ -21,6 +28,12 @@ export default function ChatMessageMenu({ photoURL, report }) {
     handleClose();
   };
 
+  const nice = () => {
+    console.log(handleNice);
+    handleNice();
+    handleClose();
+  };
+
   const handleClose = () => {
     setAnchorEl(null);
   };
@@ -28,7 +41,7 @@ export default function ChatMessageMenu({ photoURL, report }) {
   return (
     <div>
       <img
-        onClick={handleClick}
+        onClick={!myMessage ? handleClick : () => {}}
         src={
           photoURL || "https://api.adorable.io/avatars/23/abott@adorable.png"
         }
@@ -44,12 +57,14 @@ export default function ChatMessageMenu({ photoURL, report }) {
           "aria-labelledby": "basic-button",
         }}
       >
-        <MenuItem onClick={handleClose}>
-          <ListItemIcon>
-            <PlusOneIcon fontSize="small" />
-          </ListItemIcon>
-          <ListItemText>Nice message</ListItemText>
-        </MenuItem>
+        {!isNice && positive > 0.5 && (
+          <MenuItem onClick={nice}>
+            <ListItemIcon>
+              <PlusOneIcon fontSize="small" />
+            </ListItemIcon>
+            <ListItemText>Nice message</ListItemText>
+          </MenuItem>
+        )}
         <MenuItem onClick={reportMessage}>
           <ListItemIcon>
             <FlagIcon fontSize="small" />

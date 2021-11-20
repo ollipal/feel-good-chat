@@ -16,6 +16,7 @@ code {
   position: absolute;
   width: calc((100vw - 728px) / 2);
   max-width: 500px;
+  max-height: 100vh;
 }
 
 .qr-wrapper > p {
@@ -47,6 +48,7 @@ code {
   max-width: 500px;
   top: 0;
   right: 0;
+  height: 100vh;
 }
 
 .instruction-wrapper > div {
@@ -62,7 +64,7 @@ code {
 }
 
 
-@media screen and (max-device-width: 950px) {
+@media screen and (max-device-width: 1050px) {
   .instruction-wrapper {
     display: none;
   }

@@ -167,6 +167,7 @@ function ChatRoom() {
       reportedBy: [],
       agreedBy: [],
       disagreedBy: [],
+      isNice: false,
     };
     if (toxic) {
       newMessage.toxic = toxic;
@@ -210,9 +211,13 @@ function ChatMessage({ message }) {
   const [openSB, setOpenSB] = React.useState(false);
 
   const report = () => {
-    console.log(message);
     const messageRef = firestore.doc(`messages/${message.id}`);
     messageRef.update({ reportedBy: auth.currentUser.uid });
+  };
+
+  const handleNice = () => {
+    const messageRef = firestore.doc(`messages/${message.id}`);
+    messageRef.update({ isNice: true });
   };
 
   const handlePositive = () => {
@@ -245,13 +250,22 @@ function ChatMessage({ message }) {
       badMessageReminder += ` It seems to be ${badCategories.join(", ")}.`;
     }
     badMessageReminder +=
-      " Remember you lose points if you send bad messages :)";
+      " Remember you lose score if you send bad messages :)";
   }
+
+  const positive = message.isNice ? " positive" : "";
 
   return (
     <>
-      <div className={`message ${messageClass}`}>
-        <ChatMessageMenu photoURL={photoURL} report={report} />
+      <div className={`message ${messageClass}${positive}`}>
+        <ChatMessageMenu
+          photoURL={photoURL}
+          report={report}
+          handleNice={handleNice}
+          positive={message.sentiment.positive}
+          isNice={message.isNice}
+          myMessage={uid === auth.currentUser.uid}
+        />
         <p>{text}</p>
         {reportedBy.length !== 0 && !(reportedBy.includes(auth.currentUser.uid)) &&
           !(uid === auth.currentUser.uid) &&
@@ -280,7 +294,14 @@ function ChatMessage({ message }) {
       </div>
       {badMessageReminder ? (
         <div className={`message ${messageClass}`}>
-          <ChatMessageMenu photoURL={"/robot.png"} report={report} />
+          <ChatMessageMenu
+            photoURL={"/robot.png"}
+            report={report}
+            handleNice={handleNice}
+            positive={message.sentiment.positive}
+            isNice={message.isNice}
+            myMessage={uid === auth.currentUser.uid}
+          />
           {badMessageReminder ? (
             <p className="robot">{badMessageReminder}</p>
           ) : null}

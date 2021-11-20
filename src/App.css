@@ -147,6 +147,11 @@ p {
   color: black;
 }
 
+.positive p {
+  background-color: #90db2d !important;
+  color: white !important;
+}
+
 .message .robot {
   margin-top: 0px;
 }
